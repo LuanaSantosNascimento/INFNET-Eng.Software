@@ -1,0 +1,22 @@
+.container {
+  text-align: center;
+  margin-top: 50px;
+}
+
+.inputContainer {
+  margin-bottom: 20px;
+}
+
+.input {
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  width: 200px;
+}
+
+.containerResultado {
+  margin-top: 20px;
+  font-size: 24px;
+  color: #333;
+}

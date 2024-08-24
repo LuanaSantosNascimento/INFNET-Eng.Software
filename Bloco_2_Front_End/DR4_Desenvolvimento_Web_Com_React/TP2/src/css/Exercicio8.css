@@ -1,0 +1,35 @@
+.container {
+  text-align: center;
+  margin-top: 50px;
+}
+
+.input {
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  width: 300px;
+  margin-bottom: 20px;
+}
+
+.nomes {
+  list-style-type: none;
+  padding: 0;
+  max-height: 400px;
+  overflow-y: auto;
+  margin: 0 auto;
+  width: 45%;
+  border: 1px solid #d09a9a;
+  border-radius: 5px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.item {
+  padding: 10px;
+  border-bottom: 2.5px solid #812c2c;
+  text-align: left;
+}
+
+.item:last-child {
+  border-bottom: none;
+}
