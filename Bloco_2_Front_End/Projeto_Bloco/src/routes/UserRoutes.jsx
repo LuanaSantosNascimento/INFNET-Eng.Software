@@ -1,8 +1,5 @@
-import { Fragment } from "react";
 import { Route, Routes } from "react-router-dom";
 import UserDashboard from "../pages/UserDashboard";
-import LayoutConsultas from "../pages/LayoutConsultas";
-import LayoutCadastros from "../pages/LayoutCadastros";
 import FormFornecedores from "../pages/cadastros/FormFornecedores";
 import FormContatos from "../pages/cadastros/FormContatos";
 import FormProdutos from "../pages/cadastros/FormProdutos";
@@ -16,14 +13,14 @@ const UserRoutes = () => (
     <Routes>
       <Route path="/home" element={<UserDashboard />} />
       <Route path="*" element={<UserDashboard />} />
-      <Route path="/consultas" element={<LayoutConsultas />}>
+      <Route path="/consultas" element={<UserDashboard />}>
         <Route index element={<UserDashboard />} />
         <Route path="fornecedores" element={<ConsultaFornecedores />} />
         <Route path="contatos" element={<ConsultaContatos />} />
         <Route path="cotacoes" element={<ConsultaCotacoes />} />
         <Route path="produtos" element={<ConsultaProdutos />} />
       </Route>
-      <Route path="/cadastros" element={<LayoutCadastros />}>
+      <Route path="/cadastros" element={<UserDashboard />}>
         <Route index element={<UserDashboard />} />
         <Route path="fornecedores" element={<FormFornecedores />} />
         <Route path="contatos" element={<FormContatos />} />
@@ -34,25 +31,3 @@ const UserRoutes = () => (
 );
 
 export default UserRoutes;
-
-{
-  /* <BrowserRouter>
-        <Routes>
-          <Route path="/consultas" element={<LayoutConsultas />}>
-            <Route index element={<Home />} />
-            <Route path="fornecedores" element={<ConsultaFornecedores />} />
-            <Route path="contatos" element={<ConsultaContatos />} />
-            <Route path="cotacoes" element={<ConsultaCotacoes />} />
-            <Route path="produtos" element={<ConsultaProdutos />} />
-          </Route>
-          <Route path="/cadastros" element={<LayoutCadastros />}>
-            <Route index element={<Home />} />
-            <Route path="fornecedores" element={<FormFornecedores />} />
-            <Route path="contatos" element={<FormContatos />} />
-            <Route path="cotacoes" element={<FormCotacoes />} />
-            <Route path="produtos" element={<FormProdutos />} />
-          </Route>
-          <Route path="*" element={<NaoEncontrado />} />
-        </Routes>
-      </BrowserRouter> */
-}
