@@ -5,18 +5,22 @@ export const Container = styled.div`
 `;
 
 export const Menu = styled.div`
-  display: flex;  /* Flexbox para alinhar os menus lado a lado */
-  gap: 40px;  /* Espaçamento entre os menus */
+  display: flex;
+  gap: 20px;
+  justify-content: center;
 `;
 
 export const MenuItem = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
-  width: 150px; /* Define a largura fixa para o menu principal */
 `;
 
 export const MenuTitle = styled.h2`
+  a {
+    text-decoration: none;
+    color: #333;
+  }
   cursor: pointer;
   margin: 0;
   padding: 10px 20px;
@@ -34,7 +38,7 @@ export const SubMenu = styled.ul`
   padding-left: 0;
   margin: 0;
   position: absolute;
-  top: 100%;  /* Coloca o submenu logo abaixo do título */
+  top: 100%; /* Coloca o submenu logo abaixo do título */
   left: 0;
   background-color: #f9f9f9;
   box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
@@ -50,7 +54,7 @@ export const SubMenu = styled.ul`
 export const SubMenuItem = styled.li`
   margin: 0;
   padding: 10px 20px;
-  
+
   a {
     text-decoration: none;
     color: #333;

@@ -93,6 +93,7 @@ export const AuthProvider = ({ children }) => {
             email: userCredential.user.email,
             nome: userData.nome,
             admin: userData.admin,
+            id: userCredential.user.uid,
           })
         );
         return null;

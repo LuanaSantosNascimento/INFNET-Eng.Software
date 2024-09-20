@@ -26,9 +26,6 @@ export default function UserMenu() {
               <a href="/user-dashboard/consultas/fornecedores">Fornecedores</a>
             </SubMenuItem>
             <SubMenuItem>
-              <a href="/user-dashboard/consultas/cotacoes">Cotações</a>
-            </SubMenuItem>
-            <SubMenuItem>
               <a href="/user-dashboard/consultas/produtos">Produtos</a>
             </SubMenuItem>
             <SubMenuItem>
@@ -36,23 +33,12 @@ export default function UserMenu() {
             </SubMenuItem>
           </SubMenu>
         </MenuItem>
-
         <MenuItem>
-          <MenuTitle>Cadastros</MenuTitle>
-          <SubMenu>
-            <SubMenuItem>
-              <a href="/user-dashboard/cadastros/fornecedores">Fornecedores</a>
-            </SubMenuItem>
-            <SubMenuItem>
-              <a href="/user-dashboard/cadastros/cotacoes">Cotações</a>
-            </SubMenuItem>
-            <SubMenuItem>
-              <a href="/user-dashboard/cadastros/produtos">Produtos</a>
-            </SubMenuItem>
-            <SubMenuItem>
-              <a href="/user-dashboard/cadastros/contatos">Contatos</a>
-            </SubMenuItem>
-          </SubMenu>
+          <MenuTitle>
+            <a href="/user-dashboard/requisicao/compra">
+              Requisição de Compras
+            </a>
+          </MenuTitle>
         </MenuItem>
 
         <LogoutItem onClick={() => [signout(), navigate("/")]}>

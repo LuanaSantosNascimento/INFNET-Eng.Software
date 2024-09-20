@@ -23,3 +23,4 @@ export const getDados = async (uid, collection) => {
 };
 
 //admin@Luna      -> lunaLovegood@admin.com
+//rodrigo@user      -> rodrigoassis@user.com
