@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { convertArrayToCSV } from "convert-array-to-csv";
+import { downloadCSV } from "../CSV/csv";
 
 import {
   Box,
@@ -12,23 +14,24 @@ import {
   TableHead,
   Collapse,
   IconButton,
-  TableContainer,
-  Paper,
 } from "@mui/material";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import AddIcon from "@mui/icons-material/Add";
-import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import { formatarData } from "../../../servicos/utils/StringFormatter";
-import { excluirRegistroPorID, deleteCotacoesPorIDRequisicao } from "../../../servicos/firebase/FirebaseServices";
+import {
+  excluirRegistroPorID,
+  deleteCotacoesPorIDRequisicao,
+} from "../../../servicos/firebase/FirebaseServices";
 
 export function Row({
   row,
   onCotacaoCadastrada,
   onDadosLinhaSelecionada,
   listaCotacoesRelacionadas,
-  onHandleUpdate
+  onHandleUpdate,
 }) {
   const [open, setOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -36,13 +39,16 @@ export function Row({
     onDadosLinhaSelecionada(dados);
     onCotacaoCadastrada();
   };
+
   const handleDeleteCotacao = (dados) => {
     onDadosLinhaSelecionada(dados);
-    //Deletar cotações com o id de requisicao
-    //Deletar requisicao
     excluirRegistroPorID(dados.id, "requisicoes-compra");
     deleteCotacoesPorIDRequisicao(dados.id);
     onHandleUpdate();
+  };
+
+  const handleExportarCotacao = (requisicao) => {
+    downloadCSV(requisicao, listaCotacoesRelacionadas);
   };
 
   useEffect(() => {
@@ -51,7 +57,6 @@ export function Row({
         localStorage.getItem("user_token")
       ).admin;
       setIsAdmin(userTokenAdmin);
-      console.log("User token admin: " + userTokenAdmin);
     };
     carregarDados();
   }, []);
@@ -93,13 +98,6 @@ export function Row({
               </Tooltip>
             ) : null}
 
-            {/*
-            <Tooltip title="Editar Requisição">
-              <Fab color="secondary" size="medium" aria-label="edit">
-                <EditIcon />
-              </Fab>
-            </Tooltip>
-            */}
             <Tooltip title="Excluir Requisição">
               <Fab
                 style={{
@@ -115,6 +113,18 @@ export function Row({
                 <DeleteIcon style={{ color: "white" }} />
               </Fab>
             </Tooltip>
+            {listaCotacoesRelacionadas.length > 0 ? (
+              <Tooltip title="Exportar Cotações">
+                <Fab
+                  color="secondary"
+                  size="medium"
+                  aria-label="export"
+                  onClick={() => handleExportarCotacao(row)}
+                >
+                  <SaveAltIcon />
+                </Fab>
+              </Tooltip>
+            ) : null}
           </Box>
         </TableCell>
          
@@ -144,7 +154,9 @@ export function Row({
                       <TableRow key={c.id}>
                         <TableCell />
                         <TableCell align="center">{c.id}</TableCell>
-                        <TableCell align="center">{c.cotacao.data}</TableCell>
+                        <TableCell align="center">
+                          {formatarData(c.cotacao.data)}
+                        </TableCell>
                         <TableCell align="center">
                           {c.fornecedor.nome}
                         </TableCell>
