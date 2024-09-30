@@ -1,18 +1,8 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import React from "react";
 import FormularioCadastro from "../../../src/pages/FormCadastroAdmin";
-import * as authHook from "../../../src/hooks/useAuth";
-
-//Mock do hook useAuth
-jest.mock("../../../src/hooks/useAuth");
 
 describe("Testes Formulário p/ Cadastro de Admins", () => {
-  beforeEach(() => {
-    // Configura o mock da função signup
-    const mockSignup = jest.fn().mockResolvedValue(null);
-    authHook.default = jest.fn().mockReturnValue({ signup: mockSignup });
-    window.alert = jest.fn(); // Espiona o alert
-  });
 
   test("Verifica os campos presentes em tela.", () => {
     render(<FormularioCadastro />);
