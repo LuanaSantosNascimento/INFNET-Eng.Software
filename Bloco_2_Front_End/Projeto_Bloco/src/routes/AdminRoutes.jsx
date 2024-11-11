@@ -8,6 +8,7 @@ import ConsultaFornecedores from "../pages/consultas/ConsultaFornecedores";
 import ConsultaContatos from "../pages/consultas/ConsultaContatos";
 import ConsultaProdutos from "../pages/consultas/ConsultaProdutos";
 import ConsultaCotacoes from "../pages/consultas/ConsultaCotacoes";
+import RequisicaoCompra from "../pages/RequisicaoCompra";
 
 const AdminRoutes = () => (
   <Routes>
@@ -27,6 +28,10 @@ const AdminRoutes = () => (
     <Route path="cotacoes" element={<FormCotacoes />} />
     <Route path="produtos" element={<FormProdutos />} />
   </Route>
+  <Route path="/requisicao" element={<AdminDashboard />}>
+        <Route index element={<AdminDashboard />} />
+        <Route path="compra" element={<RequisicaoCompra />} />
+      </Route>
 </Routes>
 );
 

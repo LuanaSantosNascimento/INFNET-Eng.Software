@@ -26,9 +26,6 @@ export default function AdminMenu() {
               <a href="/admin-dashboard/consultas/fornecedores">Fornecedores</a>
             </SubMenuItem>
             <SubMenuItem>
-              <a href="/admin-dashboard/consultas/cotacoes">Cotações</a>
-            </SubMenuItem>
-            <SubMenuItem>
               <a href="/admin-dashboard/consultas/produtos">Produtos</a>
             </SubMenuItem>
             <SubMenuItem>
@@ -44,18 +41,25 @@ export default function AdminMenu() {
               <a href="/admin-dashboard/cadastros/fornecedores">Fornecedores</a>
             </SubMenuItem>
             <SubMenuItem>
-              <a href="/admin-dashboard/cadastros/cotacoes">Cotações</a>
-            </SubMenuItem>
-            <SubMenuItem>
               <a href="/admin-dashboard/cadastros/produtos">Produtos</a>
             </SubMenuItem>
             <SubMenuItem>
               <a href="/admin-dashboard/cadastros/contatos">Contatos</a>
             </SubMenuItem>
             <SubMenuItem>
-              <a href="/admin-dashboard/cadastros/administradores">Administradores</a>
+              <a href="/admin-dashboard/cadastros/administradores">
+                Administradores
+              </a>
             </SubMenuItem>
           </SubMenu>
+        </MenuItem>
+
+        <MenuItem>
+          <MenuTitle>
+            <a href="/admin-dashboard/requisicao/compra">
+              Requisição de Compras
+            </a>
+          </MenuTitle>
         </MenuItem>
 
         <LogoutItem onClick={() => [signout(), navigate("/")]}>

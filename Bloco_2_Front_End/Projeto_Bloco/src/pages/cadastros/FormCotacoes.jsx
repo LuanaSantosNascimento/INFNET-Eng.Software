@@ -1,168 +1,233 @@
 import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+
 import { cadastrarDados } from "../../servicos/firebase/cadastrarDados";
+import {
+  getCotacoesPorIDRequisicao,
+  getDadoPorID,
+  alterarRegistroPorID,
+} from "../../servicos/firebase/FirebaseServices";
 import { lerDados } from "../../servicos/firebase/lerDados";
 import "../../css/FormCadastrosCotacoes.css";
+import { formatarData } from "../../servicos/utils/StringFormatter";
 
-export default function Cotacoes() {
-    const [produto, setProduto] = useState("");
-    const [precoUnitario, setPrecoUnitario] = useState("");
-    const [valorTotalCotacao, setValorTotalCotacao] = useState("");
-    const [data, setData] = useState("");
-    const [quantidade, setQuantidade] = useState("");
-    const [fornecedores, setFornecedores] = useState([]);
-    const [produtos, setProdutos] = useState([]);
-    const [razaoSocialFornecedor, setRazaoSocialFornecedor] = useState("");
+import { InputLabel, MenuItem, Button, Select, TextField } from "@mui/material";
 
-    const formatarPrecoUnitario = (valor) => {
-        return valor !== "" ? parseFloat(valor).toFixed(2) : "";
+export default function Cotacoes({ props, onCotacaoCadastrada, onHandleUpdate }) {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({});
+
+  const [fornecedores, setFornecedores] = useState([]);
+  const [razaoSocialFornecedor, setRazaoSocialFornecedor] = useState();
+
+  const buscarCotacoesPorIDRequisicaoa = async (idRequisicao) => {
+    try {
+      return await getCotacoesPorIDRequisicao(idRequisicao);
+    } catch (e) {
+      console.error(`Erro ao tentar consultar dados da base ${e}`);
+    }
+  };
+
+  useEffect(() => {
+    const carregarDados = async () => {
+      try {
+        const fornecedores = await lerDados("fornecedores");
+        setFornecedores(fornecedores);
+      } catch (e) {
+        console.error(`Erro ao tentar consultar dados da base ${e}`);
+      }
+    };
+    carregarDados();
+  }, []);
+
+  {
+    /*
+
+  useEffect(() => {
+    if (quantidade && precoUnitario) {
+      const valorTotal = parseInt(quantidade) * parseFloat(precoUnitario);
+      setValorTotalCotacao(valorTotal.toFixed(2));
+    } else {
+      setValorTotalCotacao("");
+    }
+  }, [quantidade, precoUnitario]);
+  */
+  }
+
+  const adicionarCotacao = async (dados) => {
+    const cotacao = {
+      produto: {
+        id: props.produto.id,
+        nome: props.produto.nome,
+      },
+      requisicao: {
+        id: props.id,
+        usuario: props.usuario.nome,
+      },
+      cotacao: {
+        data: formatarData(dados.data),
+        quantidade: dados.quantidade,
+        precoUnitario: dados.preco,
+        valorTotalCotacao: calcularValorTotal(dados.quantidade, dados.preco),
+      },
+      fornecedor: {
+        id: dados.fornecedor.id,
+        nome: dados.fornecedor.razaoSocial,
+      },
+    };
+    const idDocumento = await cadastrarDados(cotacao, "cotacoes");
+    console.log(`ID do registro gerado: ${idDocumento}`);
+  };
+
+  const atualizarStatusRequisicao = async () => {
+    let statusRequisicao = "Em aberto";
+
+    const cotacoes = await buscarCotacoesPorIDRequisicaoa(props.id);
+    if (cotacoes.length === 0) {
+      statusRequisicao = "Em Aberto";
+    } else if (cotacoes.length === 1 || cotacoes.length === 2) {
+      statusRequisicao = "Em Cotação";
+    } else {
+      statusRequisicao = "Cotada";
+    }
+
+    const requisicao = await getDadoPorID(props.id, "requisicoes-compra");
+    const novoDado = {
+      produto: requisicao.produto,
+      requisicao: {
+        data: requisicao.requisicao.data,
+        descricao: requisicao.requisicao.descricao,
+        quantidade: requisicao.requisicao.quantidade,
+        status: statusRequisicao,
+      },
+      usuario: requisicao.usuario,
     };
 
-    const formatarData = (data) => {
-        if (!data) return "";
+    await alterarRegistroPorID(props.id, "requisicoes-compra", novoDado);
+  };
 
-        const dataObj = new Date(data);
-        const dia = dataObj.getDate();
-        const mes = dataObj.getMonth() + 1;
-        const ano = dataObj.getFullYear();
+  const handleAddCotacao = async (dados) => {
+    try {
+      const cotacoesCadastradas = await buscarCotacoesPorIDRequisicaoa(
+        props.id
+      );
 
-        return `${dia}/${mes}/${ano}`;
-    };
-    
-    useEffect(() => {
-        const carregarDados = async () => {
-            try {
-                const fornecedores = await lerDados("fornecedores");
-                const produtosBase = await lerDados("produtos");
-                setFornecedores(fornecedores);
-                setProdutos(produtosBase);
-            } catch (e) {
-                console.error(`Erro ao tentar consultar dados da base ${e}`);
-            }
-        };
-        carregarDados();
-    }, []);
+      if (cotacoesCadastradas.length <= 2) {
+        await adicionarCotacao(dados);
+        await atualizarStatusRequisicao();
+      }
+      reset();
+      onCotacaoCadastrada();
+      onHandleUpdate();
+    } catch (e) {
+      console.log("Erro ao cadastrar cotação", e);
+    }
+  };
 
-    useEffect(() => {
-        if (quantidade && precoUnitario) {
-            const valorTotal = parseInt(quantidade) * parseFloat(precoUnitario);
-            setValorTotalCotacao(valorTotal.toFixed(2));
-        } else {
-            setValorTotalCotacao("");
-        }
-    }, [quantidade, precoUnitario]);
+  const calcularValorTotal = (quantidade, precoUnitario) => {
+    return (parseInt(quantidade) * parseFloat(precoUnitario)).toFixed(2);
+  };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+  const handleChange = (event) => {
+    setRazaoSocialFornecedor(event.target.value);
+  };
 
-        try {
-            const idDocumento = await cadastrarDados(
-                {
-                    produto,
-                    precoUnitario: parseFloat(precoUnitario).toFixed(2),
-                    valorTotalCotacao,
-                    data: formatarData(data),
-                    quantidade,
-                    razaoSocialFornecedor,
-                },
-                "cotacoes",
-            );
+  return (
+    <div className="container-formulario">
+      <h3>Nova Cotação</h3>
 
-              alert(`Cotação para o produto'${produto}' cadastrada com sucesso!`);
-              console.log(`ID do registro gerado: ${idDocumento}`);
-            setProduto("");
-            setPrecoUnitario("");
-            setValorTotalCotacao("");
-            setData("");
-            setQuantidade("");
-            setRazaoSocialFornecedor("");
-        } catch (e) {
-            console.log("Erro ao cadastrar cotação", e);
-        }
-    };
+      <form onSubmit={handleSubmit(handleAddCotacao)} className="form-linha">
+        <div className="form-coluna">
+          <InputLabel id="fornecedor">Fornecedor:</InputLabel>
+          <Select
+            value={razaoSocialFornecedor}
+            onChange={handleChange}
+            {...register("fornecedor", {
+              required:
+                "Campo obrigatório, preencha-o para continuar com a operação.",
+            })}
+            helperText={errors?.fornecedor?.message}
+          >
+            {fornecedores.map((f) => (
+              <MenuItem key={f.razaoSocial} value={f}>
+                {f.nome}
+              </MenuItem>
+            ))}
+          </Select>
 
-    return (
-        <div className="container-formulario">
-            <h3>Cotações</h3>
-
-            <form onSubmit={handleSubmit} className="form-linha">
-                <div className="form-coluna">
-                    <label htmlFor="fornecedor">Fornecedor:</label>
-                    <select
-                        id="fornecedor"
-                        required
-                        value={razaoSocialFornecedor}
-                        onChange={(e) =>
-                            setRazaoSocialFornecedor(e.target.value)
-                        }
-                    >
-                        <option value="">Selecione um fornecedor</option>
-                        {fornecedores.map((f) => (
-                            <option key={f.razaoSocial} value={f.razaoSocial}>
-                                {f.nome}
-                            </option>
-                        ))}
-                    </select>
-
-                    <label htmlFor="produto">Produto:</label>
-                    <select
-                        id="produto"
-                        required
-                        value={produto}
-                        onChange={(e) => setProduto(e.target.value)}
-                    >
-                        <option value="">Selecione um produto</option>
-                        {produtos.map((p) => (
-                            <option key={p.nome} value={p.nome}>
-                                {p.nome}
-                            </option>
-                        ))}
-                    </select>
-                </div>
-
-                <div className="form-coluna">
-                    <label htmlFor="quantidade">Quantidade:</label>
-                    <input
-                        id="quantidade"
-                        type="number"
-                        required
-                        placeholder="Informe a quantidade..."
-                        value={quantidade}
-                        onChange={(e) => setQuantidade(e.target.value)}
-                    ></input>
-
-                    <label htmlFor="preco">Preço Unitário:</label>
-                    <input
-                        id="preco"
-                        type="number"
-                        placeholder="Informe o preço unitário..."
-                        required
-                        value={formatarPrecoUnitario(precoUnitario)}
-                        onChange={(e) => setPrecoUnitario(e.target.value)}
-                    ></input>
-                </div>
-                <div className="form-coluna">
-                    <label htmlFor="data">Data:</label>
-                    <input
-                        id="data"
-                        type="date"
-                        required
-                        value={data}
-                        onChange={(e) => setData(e.target.value)}
-                    ></input>
-
-                    <label htmlFor="valorTotalCotacao">Valor total:</label>
-                    <input
-                        id="valorTotalCotacao"
-                        type="number"
-                        placeholder="..."
-                        step="0.01"
-                        readOnly
-                        value={valorTotalCotacao}
-                    ></input>
-                </div>
-
-                <button type="submit">Cadastrar nova cotação</button>
-            </form>
+          <InputLabel>Produto:</InputLabel>
+          <TextField
+            type="text"
+            value={props.produto.nome}
+            disabled
+            variant="standard"
+          />
         </div>
-    );
+
+        <div className="form-coluna">
+          <InputLabel labelId="quantidade">Quantidade:</InputLabel>
+          <TextField
+            id="quantidade"
+            type="number"
+            placeholder="Informe a quantidade..."
+            {...register("quantidade", {
+              required:
+                "Campo obrigatório, preencha-o para continuar com a operação.",
+            })}
+            helperText={errors?.quantidade?.message}
+            variant="standard"
+          />
+
+          <InputLabel htmlFor="preco">Preço Unitário:</InputLabel>
+          <TextField
+            type="text"
+            placeholder="Informe o preço unitário..."
+            variant="standard"
+            {...register("preco", {
+              required:
+                "Campo obrigatório, preencha-o para continuar com a operação.",
+              pattern: {
+                value: /^\d+(\.\d{1,2})?$/,
+                message: "Digite um valor numérico positivo válido (ex: 10.50)",
+              },
+            })}
+            helperText={errors?.preco?.message}
+          />
+        </div>
+        <div className="form-coluna">
+          <InputLabel htmlFor="data">Data:</InputLabel>
+          <TextField
+            {...register("data", {
+              required:
+                "Campo obrigatório, preencha-o para continuar com a operação.",
+            })}
+            color="secondary"
+            type="date"
+            variant="standard"
+            helperText={errors?.data?.message}
+          />
+
+          {/*
+          <InputLabel htmlFor="valorTotalCotacao">Valor total:</InputLabel>
+          <TextField
+            id="valorTotalCotacao"
+            type="number"
+            placeholder="..."
+            variant="standard"
+            disabled
+            value={valorTotalCotacao}
+          />
+          */}
+        </div>
+
+        <Button variant="contained" type="submit">
+          Cadastrar nova cotação
+        </Button>
+      </form>
+    </div>
+  );
 }

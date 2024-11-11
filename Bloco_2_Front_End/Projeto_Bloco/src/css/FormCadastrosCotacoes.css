@@ -30,7 +30,9 @@
   flex: 1;
   display: flex;
   flex-direction: column;
+  padding-top: 10px;
 }
+
 
 .container-formulario label {
   margin-bottom: 8px;
@@ -69,4 +71,11 @@
 
 .container-formulario button[type="submit"]:hover {
   background-color: #0056b3;
+}
+
+.custom-label {
+  margin-top: 10px;
+}
+.container-geral{
+  margin-top: 50px !important;
 }

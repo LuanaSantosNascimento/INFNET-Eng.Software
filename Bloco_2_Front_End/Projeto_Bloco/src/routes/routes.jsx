@@ -8,6 +8,8 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 const Private = ({ Item }) => {
   const {signed} = useAuth();
+  const user = JSON.parse(localStorage.getItem("user_token"));
+//TODO Tela de loading
   return signed > 0 ? <Item /> : <Login />;
 };
 
