@@ -7,9 +7,7 @@ import Cadastrar from "../pages/FormCadastro";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 const Private = ({ Item }) => {
-  const {signed} = useAuth();
-  const user = JSON.parse(localStorage.getItem("user_token"));
-//TODO Tela de loading
+  const { signed } = useAuth();
   return signed > 0 ? <Item /> : <Login />;
 };
 
@@ -18,8 +16,16 @@ const RoutesApp = () => {
     <BrowserRouter>
       <Fragment>
         <Routes>
-          <Route exact path="/admin-dashboard/*" element={<Private Item={AdminRoutes} />} />
-          <Route exact path="/user-dashboard/*" element={<Private Item={UserRoutes} />} />
+          <Route
+            exact
+            path="/admin-dashboard/*"
+            element={<Private Item={AdminRoutes} />}
+          />
+          <Route
+            exact
+            path="/user-dashboard/*"
+            element={<Private Item={UserRoutes} />}
+          />
           <Route exact path="/registre-se" element={<Cadastrar />} />
           <Route exact path="/" element={<Login />} />
           <Route exact path="*" element={<Login />} />

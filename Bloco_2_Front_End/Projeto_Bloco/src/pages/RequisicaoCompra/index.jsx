@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 
-import { lerDados } from "../../servicos/firebase/lerDados";
-import { cadastrarDados } from "../../servicos/firebase/cadastrarDados";
+import {
+  getDadosPorIdCustomizaddo,
+  lerDados,
+  cadastrarDados,
+} from "../../servicos/firebase/FirebaseServices";
 import Cotacoes from "../cadastros/FormCotacoes";
 import { Row } from "./TableRow/Row";
 import "../../css/FormCadastrosCotacoes.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import {
   InputLabel,
@@ -14,17 +16,11 @@ import {
   Button,
   Select,
   TextField,
-  Box,
-  Typography,
-  Fab,
-  Tooltip,
   Table,
   TableBody,
   TableCell,
   TableRow,
   TableHead,
-  Collapse,
-  IconButton,
   TableContainer,
   Paper,
 } from "@mui/material";
@@ -81,18 +77,40 @@ export default function RequisicaoCompra() {
     carregarDados();
   }, []);
 
-  //Buscar produtos cadastrados
+  //Buscar requisicoes de compra
   useEffect(() => {
-    //TODO FILTRO POR USUÁRIO -- QUANDO FOR USUÁRIO COMUM
-    //ADMIN VÊ TUDO DE TODOS OS USUÁRIOS
-
     const listarRequisicoesCompra = async () => {
       try {
-        const dadosRequisicoes = await lerDados("requisicoes-compra");
-        setRequisicoesCompra(dadosRequisicoes);
+        const dadosUsuarioLogado = JSON.parse(
+          localStorage.getItem("user_token")
+        );
 
-        const dadosCotacoes = await lerDados("cotacoes");
-        setCotacoes(dadosCotacoes);
+        if (!dadosUsuarioLogado.admin) {
+          const requisicoesColaborador = await getDadosPorIdCustomizaddo(
+            dadosUsuarioLogado.id,
+            "requisicoes-compra",
+            "usuario.id",
+            "requisicao.data"
+          );
+          setRequisicoesCompra(requisicoesColaborador);
+
+          const cotacoesColaborador = await getDadosPorIdCustomizaddo(
+            dadosUsuarioLogado.id,
+            "cotacoes",
+            "requisicao.idUsuario",
+            "cotacao.data"
+          );
+          setCotacoes(cotacoesColaborador);
+        } else {
+          const requisicoesAdm = await lerDados(
+            "requisicoes-compra",
+            "requisicao.data"
+          );
+          setRequisicoesCompra(requisicoesAdm);
+
+          const cotacoesAdm = await lerDados("cotacoes", "cotacao.data");
+          setCotacoes(cotacoesAdm);
+        }
       } catch (e) {
         console.error(`Erro ao tentar consultar dados da base ${e}`);
       }
@@ -113,7 +131,7 @@ export default function RequisicaoCompra() {
           nome: dados.produto.nome,
         },
         requisicao: {
-          data: dados.data,
+          data: new Date(),
           status: "Em Aberto",
           quantidade: dados.quantidade,
           descricao: dados.descricao,
@@ -121,6 +139,7 @@ export default function RequisicaoCompra() {
       };
       await cadastrarDados(dadosRequisicao, "requisicoes-compra");
       handleForceUpdate();
+      setProdutoSelecionado("");
       reset();
     } catch (error) {
       //TODO MODAL DE ERRO
@@ -149,7 +168,7 @@ export default function RequisicaoCompra() {
       };
     }
     setToggleExibirFormRequisicoes(!toggleExibirFormRequisicoes);
-    
+
     setDadosBotao(dadosBotao);
   };
 
@@ -159,20 +178,6 @@ export default function RequisicaoCompra() {
         <div className="container-formulario">
           <form onSubmit={handleSubmit(handleEnviar)} className="form-linha">
             <div className="form-coluna">
-              <InputLabel className="custom-label">
-                Data da requisição
-              </InputLabel>
-              <TextField
-                {...register("data", {
-                  required:
-                    "O campo 'data' é obrigatório, preencha-o para continuar com a operação.",
-                })}
-                color="secondary"
-                type="date"
-                variant="standard"
-                helperText={errors?.data?.message}
-              />
-
               <InputLabel className="custom-label">Descrição</InputLabel>
               <TextField
                 color="secondary"
@@ -184,9 +189,7 @@ export default function RequisicaoCompra() {
                 })}
                 helperText={errors?.descricao?.message}
               />
-            </div>
 
-            <div className="form-coluna">
               <InputLabel className="custom-label">Quantidade</InputLabel>
               <TextField
                 color="secondary"
@@ -198,7 +201,9 @@ export default function RequisicaoCompra() {
                 })}
                 helperText={errors?.quantidade?.message}
               />
+            </div>
 
+            <div className="form-coluna">
               <InputLabel className="custom-label">Status</InputLabel>
               <TextField
                 disabled
@@ -207,8 +212,6 @@ export default function RequisicaoCompra() {
                 variant="standard"
                 defaultValue="Em aberto"
               />
-            </div>
-            <div className="form-coluna">
               <InputLabel className="custom-label" id="select-produto">
                 Produto
               </InputLabel>
@@ -256,7 +259,7 @@ export default function RequisicaoCompra() {
         {dadosBotao.texto}
       </Button>
       {/*Tabela de cotações*/}
-      {requisicoesCompra.length > 0 && (
+      {requisicoesCompra && requisicoesCompra.length > 0 && (
         <TableContainer component={Paper}>
           <Table aria-label="collapsible table">
             <TableHead>

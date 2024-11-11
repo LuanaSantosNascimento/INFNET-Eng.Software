@@ -67,9 +67,10 @@ export default function Cotacoes({ props, onCotacaoCadastrada, onHandleUpdate })
       requisicao: {
         id: props.id,
         usuario: props.usuario.nome,
+        idUsuario: props.usuario.id,
       },
       cotacao: {
-        data: formatarData(dados.data),
+        data: new Date(),
         quantidade: dados.quantidade,
         precoUnitario: dados.preco,
         valorTotalCotacao: calcularValorTotal(dados.quantidade, dados.preco),
@@ -198,32 +199,6 @@ export default function Cotacoes({ props, onCotacaoCadastrada, onHandleUpdate })
             helperText={errors?.preco?.message}
           />
         </div>
-        <div className="form-coluna">
-          <InputLabel htmlFor="data">Data:</InputLabel>
-          <TextField
-            {...register("data", {
-              required:
-                "Campo obrigatório, preencha-o para continuar com a operação.",
-            })}
-            color="secondary"
-            type="date"
-            variant="standard"
-            helperText={errors?.data?.message}
-          />
-
-          {/*
-          <InputLabel htmlFor="valorTotalCotacao">Valor total:</InputLabel>
-          <TextField
-            id="valorTotalCotacao"
-            type="number"
-            placeholder="..."
-            variant="standard"
-            disabled
-            value={valorTotalCotacao}
-          />
-          */}
-        </div>
-
         <Button variant="contained" type="submit">
           Cadastrar nova cotação
         </Button>

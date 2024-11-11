@@ -11,11 +11,9 @@ const Home = () => {
 
   return (
     <>
-      <AdminMenu/>
-      <C.Container>
-    </C.Container>
-    </>
+      <AdminMenu />
 
+    </>
   );
 };
 

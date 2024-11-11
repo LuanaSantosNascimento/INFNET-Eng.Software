@@ -4,6 +4,7 @@ import {
   cadastrarDadosComID,
   cadastrarDados,
 } from "../servicos/firebase/cadastrarDados";
+import { alterarRegistroPorID } from "../servicos/firebase/FirebaseServices";
 import { getDados } from "../servicos/firebase/lerDados";
 import {
   createUserWithEmailAndPassword,
@@ -15,7 +16,6 @@ import {
 export const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }) => {
-
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -30,17 +30,21 @@ export const AuthProvider = ({ children }) => {
     return () => unsubscribe();
   }, []);
 
-  const signup = async (email, senha, nome) => {
+  const signup = async (email, senha, nome, admin) => {
     try {
       // Criar o usuário no Firebase Authentication
-      const userCredential = await createUserWithEmailAndPassword(auth,email,senha);
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        senha
+      );
       const user = userCredential.user;
 
       // Criar o documento na coleção "usuarios" usando o mesmo ID do usuário
       const dados = {
         email: user.email,
         criadoEm: new Date(),
-        admin: false,
+        admin: admin,
         nome: nome,
       };
 
@@ -78,14 +82,19 @@ export const AuthProvider = ({ children }) => {
       const userDoc = await getDados(userCredential.user.uid, "usuarios");
 
       if (userDoc.exists()) {
-        const userData = userDoc.data();
+        let userData = userDoc.data();
+        if (userData?.status === "Bloqueado") {
+          return "Usuário bloqueado.\nEntre em contato com seu administrador!";
+        }
+
+        userData.ultimoLogin = new Date();
         setUser({
           uid: userCredential.user.uid,
           email: userCredential.user.email,
           nome: userData.nome,
           admin: userData.admin,
         });
-  
+
         // Armazena as informações necessárias no localStorage
         localStorage.setItem(
           "user_token",
@@ -96,6 +105,12 @@ export const AuthProvider = ({ children }) => {
             id: userCredential.user.uid,
           })
         );
+        await alterarRegistroPorID(
+          userCredential.user.uid,
+          "usuarios",
+          userData
+        );
+
         return null;
       } else {
         console.error("Usuário não encontrado na coleção 'usuarios'");

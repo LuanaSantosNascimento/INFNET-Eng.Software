@@ -1,5 +1,5 @@
 import * as C from "./styles";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import useAuth from "../../hooks/useAuth";
 import Input from "../../componentes/Input";
 import Button from "../../componentes/Button";
@@ -10,13 +10,14 @@ const Signup = () => {
   const [emailConf, setEmailConf] = useState("");
   const [senha, setSenha] = useState("");
   const [nome, setNome] = useState("");
+  const admin = false;
   const [error, setError] = useState("");
   const navigate = useNavigate();
-
   const { signup } = useAuth();
 
   const handleSignup = async () => {
-    if (!email || !emailConf || !senha || !nome) { // Verifica se o nome também foi preenchido
+    if (!email || !emailConf || !senha || !nome) {
+      // Verifica se o nome também foi preenchido
       setError("Preencha todos os campos");
       return;
     } else if (email !== emailConf) {
@@ -24,7 +25,7 @@ const Signup = () => {
       return;
     }
 
-    const res = await signup(email, senha, nome); // Inclui o nome na chamada para signup
+    const res = await signup(email, senha, nome, admin); // Inclui o nome na chamada para signup
 
     if (res) {
       setError(res);
@@ -37,7 +38,7 @@ const Signup = () => {
 
   return (
     <C.Container>
-      <C.Label>SISTEMA DE LOGIN</C.Label>
+      <C.Label>Cadastre-se</C.Label>
       <C.Content>
         <Input
           type="text"

@@ -11,6 +11,7 @@ import {
   SubMenuItem,
   LogoutItem,
 } from "./styles";
+import { Link } from "react-router-dom";
 
 export default function UserMenu() {
   const { signout } = useAuth();
@@ -23,21 +24,23 @@ export default function UserMenu() {
           <MenuTitle>Consultas</MenuTitle>
           <SubMenu>
             <SubMenuItem>
-              <a href="/user-dashboard/consultas/fornecedores">Fornecedores</a>
+              <Link to="/user-dashboard/consultas/fornecedores">
+                Fornecedores
+              </Link>
             </SubMenuItem>
             <SubMenuItem>
-              <a href="/user-dashboard/consultas/produtos">Produtos</a>
+              <Link to="/user-dashboard/consultas/produtos">Produtos</Link>
             </SubMenuItem>
             <SubMenuItem>
-              <a href="/user-dashboard/consultas/contatos">Contatos</a>
+              <Link to="/user-dashboard/consultas/contatos">Contatos</Link>
             </SubMenuItem>
           </SubMenu>
         </MenuItem>
         <MenuItem>
           <MenuTitle>
-            <a href="/user-dashboard/requisicao/compra">
+            <Link to="/user-dashboard/requisicao/compra">
               Requisição de Compras
-            </a>
+            </Link>
           </MenuTitle>
         </MenuItem>
 

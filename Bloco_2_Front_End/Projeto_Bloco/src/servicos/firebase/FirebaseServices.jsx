@@ -1,4 +1,4 @@
-import { db } from "../../../firebase";
+import { db, auth } from "../../../firebase";
 import {
   collection,
   addDoc,
@@ -9,6 +9,8 @@ import {
   updateDoc,
   query,
   where,
+  orderBy,
+  setDoc,
 } from "firebase/firestore";
 
 export const cadastrarDados = async (dados, document) => {
@@ -23,12 +25,23 @@ export const cadastrarDados = async (dados, document) => {
   }
 };
 
-export const lerDados = async (document) => {
+export const lerDados = async (document, propriedadeOdenacao) => {
   const mensagemErro = "Erro ao tentar consultar dados da base -";
+  let dados;
+  let querySnapshot;
 
   try {
-    const querySnapshot = await getDocs(collection(db, document));
-    const dados = querySnapshot.docs.map((doc) => ({
+    if (propriedadeOdenacao !== undefined && propriedadeOdenacao !== null) {
+      const q = query(
+        collection(db, document),
+        orderBy(propriedadeOdenacao, "asc")
+      );
+      querySnapshot = await getDocs(q);
+    } else {
+      querySnapshot = await getDocs(collection(db, document));
+    }
+
+    dados = querySnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
     }));
@@ -54,7 +67,17 @@ export const excluirRegistroPorID = async (uid, collection) => {
 
 export const alterarRegistroPorID = async (uid, collection, dadoAlterado) => {
   const docRef = doc(db, collection, uid);
+  console.log(dadoAlterado)
   await updateDoc(docRef, dadoAlterado);
+};
+
+export const alterarRegistroPorIDComMerge = async (
+  uid,
+  collection,
+  dadoAlterado
+) => {
+  const docRef = doc(db, collection, uid);
+  await setDoc(docRef, dadoAlterado, { merge: true });
 };
 
 export const getCotacoesPorIDRequisicao = async (idRequisicao) => {
@@ -70,10 +93,40 @@ export const getCotacoesPorIDRequisicao = async (idRequisicao) => {
     }));
     return dados;
   } catch (error) {
-    console.error("Erro ao buscar cotações: ", error);
+    console.error("Erro ao buscar cotações por idRequisicao: ", error);
   }
 };
 
+export const getDadosPorIdCustomizaddo = async (
+  id,
+  collectionName,
+  propriedade,
+  propriedadeOrdenacao
+) => {
+  try {
+    const docRef = collection(db, collectionName);
+    const q = query(
+      docRef,
+      where(propriedade, "==", id),
+      orderBy(propriedadeOrdenacao, "asc")
+    );
+
+    const querySnapshot = await getDocs(q);
+
+    const dados = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    console.log(dados);
+    console.log("--------------------------------");
+    return dados;
+  } catch (error) {
+    console.error(
+      `Erro ao buscar ${collectionName} por ${propriedade}: ${error}`
+    );
+  }
+};
 
 export const deleteCotacoesPorIDRequisicao = async (idRequisicao) => {
   try {
@@ -83,8 +136,18 @@ export const deleteCotacoesPorIDRequisicao = async (idRequisicao) => {
     querySnapshot.forEach((doc) => {
       deleteDoc(doc.ref);
     });
-
   } catch (error) {
     console.error("Erro ao deletar cotações: ", error);
+  }
+};
+
+export const getDadosLogin = () => {
+  const user = auth.currentUser;
+
+  if (user) {
+    returnuser.metadata;
+  } else {
+    console.log("Nenhum usuário logado.");
+    return null;
   }
 };

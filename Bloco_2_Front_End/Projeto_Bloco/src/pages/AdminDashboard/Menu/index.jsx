@@ -11,6 +11,7 @@ import {
   SubMenuItem,
   LogoutItem,
 } from "./styles";
+import { Link } from "react-router-dom";
 
 export default function AdminMenu() {
   const { signout } = useAuth();
@@ -23,13 +24,15 @@ export default function AdminMenu() {
           <MenuTitle>Consultas</MenuTitle>
           <SubMenu>
             <SubMenuItem>
-              <a href="/admin-dashboard/consultas/fornecedores">Fornecedores</a>
+              <Link to="/admin-dashboard/consultas/fornecedores">
+                Fornecedores
+              </Link>
             </SubMenuItem>
             <SubMenuItem>
-              <a href="/admin-dashboard/consultas/produtos">Produtos</a>
+              <Link to="/admin-dashboard/consultas/produtos">Produtos</Link>
             </SubMenuItem>
             <SubMenuItem>
-              <a href="/admin-dashboard/consultas/contatos">Contatos</a>
+              <Link to="/admin-dashboard/consultas/contatos">Contatos</Link>
             </SubMenuItem>
           </SubMenu>
         </MenuItem>
@@ -38,27 +41,40 @@ export default function AdminMenu() {
           <MenuTitle>Cadastros</MenuTitle>
           <SubMenu>
             <SubMenuItem>
-              <a href="/admin-dashboard/cadastros/fornecedores">Fornecedores</a>
+              <Link to="/admin-dashboard/cadastros/fornecedores">
+                Fornecedores
+              </Link>
             </SubMenuItem>
             <SubMenuItem>
-              <a href="/admin-dashboard/cadastros/produtos">Produtos</a>
+              <Link to="/admin-dashboard/cadastros/produtos">Produtos</Link>
             </SubMenuItem>
             <SubMenuItem>
-              <a href="/admin-dashboard/cadastros/contatos">Contatos</a>
+              <Link to="/admin-dashboard/cadastros/contatos">Contatos</Link>
+            </SubMenuItem>
+          </SubMenu>
+        </MenuItem>
+
+        <MenuItem>
+          <MenuTitle>Usuários</MenuTitle>
+          <SubMenu>
+            <SubMenuItem>
+              <Link to="/admin-dashboard/gerenciamento/usuarios">
+                Gerenciar Contas
+              </Link>
             </SubMenuItem>
             <SubMenuItem>
-              <a href="/admin-dashboard/cadastros/administradores">
-                Administradores
-              </a>
+              <Link to="/admin-dashboard/gerenciamento/cadastro-admin">
+                Cadastrar Administrador
+              </Link>
             </SubMenuItem>
           </SubMenu>
         </MenuItem>
 
         <MenuItem>
           <MenuTitle>
-            <a href="/admin-dashboard/requisicao/compra">
+            <Link to="/admin-dashboard/requisicao/compra">
               Requisição de Compras
-            </a>
+            </Link>
           </MenuTitle>
         </MenuItem>
 
