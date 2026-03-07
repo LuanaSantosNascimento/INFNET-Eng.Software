@@ -1,4 +1,4 @@
-package org.sammancoaching.dependencies;
+package org.sammancoaching.pipeline.config;
 
 public interface Config {
     boolean sendEmailSummary();

@@ -1,9 +1,12 @@
-package org.sammancoaching;
+package org.sammancoaching.pipeline;
 
 import org.approvaltests.combinations.CombinationApprovals;
 import org.junit.jupiter.api.Test;
-import org.sammancoaching.dependencies.Project;
-import org.sammancoaching.dependencies.TestStatus;
+import org.sammancoaching.pipeline.config.CapturingEmailer;
+import org.sammancoaching.pipeline.config.CapturingLogger;
+import org.sammancoaching.pipeline.config.DefaultConfig;
+import org.sammancoaching.pipeline.data.Project;
+import org.sammancoaching.pipeline.enums.TestStatus;
 
 /**
  * This is a different style of test, an Approval test, to illustrate another way to do this.

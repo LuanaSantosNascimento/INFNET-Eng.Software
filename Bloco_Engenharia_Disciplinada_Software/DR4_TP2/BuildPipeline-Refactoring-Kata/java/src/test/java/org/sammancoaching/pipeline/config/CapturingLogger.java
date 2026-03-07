@@ -1,8 +1,7 @@
-package org.sammancoaching;
+package org.sammancoaching.pipeline.config;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.sammancoaching.dependencies.Logger;
 
 public class CapturingLogger implements Logger {
     private final List<String> lines = new ArrayList<>();

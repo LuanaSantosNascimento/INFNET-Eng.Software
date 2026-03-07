@@ -1,7 +1,4 @@
-package org.sammancoaching;
-
-
-import org.sammancoaching.dependencies.Emailer;
+package org.sammancoaching.pipeline.config;
 
 public class CapturingEmailer implements Emailer {
     public final StringBuilder spy;

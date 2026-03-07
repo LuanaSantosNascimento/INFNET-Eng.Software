@@ -1,11 +1,12 @@
-package org.sammancoaching;
+package org.sammancoaching.pipeline;
 
 import java.util.Arrays;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.sammancoaching.dependencies.Config;
-import org.sammancoaching.dependencies.Emailer;
-import org.sammancoaching.dependencies.Project;
+import org.sammancoaching.pipeline.config.CapturingLogger;
+import org.sammancoaching.pipeline.config.Config;
+import org.sammancoaching.pipeline.config.Emailer;
+import org.sammancoaching.pipeline.data.Project;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -13,14 +14,14 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.sammancoaching.dependencies.TestStatus.FAILING_TESTS;
-import static org.sammancoaching.dependencies.TestStatus.NO_TESTS;
-import static org.sammancoaching.dependencies.TestStatus.PASSING_TESTS;
+import static org.sammancoaching.pipeline.enums.TestStatus.FAILING_TESTS;
+import static org.sammancoaching.pipeline.enums.TestStatus.NO_TESTS;
+import static org.sammancoaching.pipeline.enums.TestStatus.PASSING_TESTS;
 
 class PipelineTest {
-    private Config config = mock(Config.class);
-    private CapturingLogger log = new CapturingLogger();
-    private Emailer emailer = mock(Emailer.class);
+    private final Config config = mock(Config.class);
+    private final CapturingLogger log = new CapturingLogger();
+    private final Emailer emailer = mock(Emailer.class);
 
     private Pipeline pipeline;
 
