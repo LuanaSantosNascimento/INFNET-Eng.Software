@@ -1,4 +1,4 @@
-package org.sammancoaching.pipeline.config;
+package org.sammancoaching.pipeline.util;
 
 public interface Logger {
     void info(String message);
