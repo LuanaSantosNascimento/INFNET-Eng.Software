@@ -4,10 +4,11 @@ import java.util.Arrays;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.sammancoaching.pipeline.config.CapturingLogger;
-import org.sammancoaching.pipeline.config.Config;
-import org.sammancoaching.pipeline.config.Emailer;
+import org.sammancoaching.pipeline.util.Config;
+import org.sammancoaching.pipeline.util.Emailer;
 import org.sammancoaching.pipeline.data.Project;
 import org.sammancoaching.pipeline.enums.DeploymentEnvironment;
+import org.sammancoaching.pipeline.service.PipelineService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -19,16 +20,16 @@ import static org.sammancoaching.pipeline.enums.TestStatus.FAILING_TESTS;
 import static org.sammancoaching.pipeline.enums.TestStatus.NO_TESTS;
 import static org.sammancoaching.pipeline.enums.TestStatus.PASSING_TESTS;
 
-class PipelineTest {
+class PipelineServiceTest {
     private final Config config = mock(Config.class);
     private final CapturingLogger log = new CapturingLogger();
     private final Emailer emailer = mock(Emailer.class);
 
-    private Pipeline pipeline;
+    private PipelineService pipelineService;
 
     @BeforeEach
     void setUp() {
-        pipeline = new Pipeline(config, emailer, log);
+        pipelineService = new PipelineService(config, emailer, log);
     }
 
     @Test
@@ -40,7 +41,7 @@ class PipelineTest {
                 .setDeploysSuccessfully(true) //
                 .build();
 
-        pipeline.run(project);
+        pipelineService.run(project);
 
         assertEquals(Arrays.asList( //
                 "INFO: Tests passed", //
@@ -60,7 +61,7 @@ class PipelineTest {
                 .setDeploysSuccessfully(true) //
                 .build();
 
-        pipeline.run(project);
+        pipelineService.run(project);
 
         assertEquals(Arrays.asList( //
                 "INFO: Tests passed", //
@@ -80,7 +81,7 @@ class PipelineTest {
                 .setDeploysSuccessfully(true) //
                 .build();
 
-        pipeline.run(project);
+        pipelineService.run(project);
 
         assertEquals(Arrays.asList( //
                 "INFO: No tests", //
@@ -100,7 +101,7 @@ class PipelineTest {
                 .setDeploysSuccessfully(true) //
                 .build();
 
-        pipeline.run(project);
+        pipelineService.run(project);
 
         assertEquals(Arrays.asList( //
                 "INFO: No tests", //
@@ -119,7 +120,7 @@ class PipelineTest {
                 .setTestStatus(FAILING_TESTS) //
                 .build();
 
-        pipeline.run(project);
+        pipelineService.run(project);
 
         assertEquals(Arrays.asList( //
                 "ERROR: Tests failed", //
@@ -137,7 +138,7 @@ class PipelineTest {
                 .setTestStatus(FAILING_TESTS) //
                 .build();
 
-        pipeline.run(project);
+        pipelineService.run(project);
 
         assertEquals(Arrays.asList( //
                 "ERROR: Tests failed", //
@@ -156,7 +157,7 @@ class PipelineTest {
                 .setDeploysSuccessfully(false) //
                 .build();
 
-        pipeline.run(project);
+        pipelineService.run(project);
 
         assertEquals(Arrays.asList( //
                 "INFO: Tests passed", //
@@ -176,7 +177,7 @@ class PipelineTest {
                 .setDeploysSuccessfully(false) //
                 .build();
 
-        pipeline.run(project);
+        pipelineService.run(project);
 
         assertEquals(Arrays.asList( //
                 "INFO: Tests passed", //
@@ -196,7 +197,7 @@ class PipelineTest {
                 .setDeploysSuccessfully(false) //
                 .build();
 
-        pipeline.run(project);
+        pipelineService.run(project);
 
         assertEquals(Arrays.asList( //
                 "INFO: No tests", //
@@ -216,7 +217,7 @@ class PipelineTest {
                 .setDeploysSuccessfully(false) //
                 .build();
 
-        pipeline.run(project);
+        pipelineService.run(project);
 
         assertEquals(Arrays.asList( //
                 "INFO: No tests", //
@@ -236,7 +237,7 @@ class PipelineTest {
                 .setDeploysSuccessfullyToStaging(true)
                 .build();
 
-        pipeline.run(project, DeploymentEnvironment.STAGING);
+        pipelineService.run(project, DeploymentEnvironment.STAGING);
 
         assertEquals(Arrays.asList(
                 "INFO: No tests",
@@ -256,7 +257,7 @@ class PipelineTest {
                 .setDeploysSuccessfullyToStaging(true)
                 .build();
 
-        pipeline.run(project, DeploymentEnvironment.STAGING);
+        pipelineService.run(project, DeploymentEnvironment.STAGING);
 
         assertEquals(Arrays.asList(
                 "INFO: Tests passed",
@@ -276,7 +277,7 @@ class PipelineTest {
                 .setDeploysSuccessfullyToStaging(false)
                 .build();
 
-        pipeline.run(project, DeploymentEnvironment.STAGING);
+        pipelineService.run(project, DeploymentEnvironment.STAGING);
 
         assertEquals(Arrays.asList(
                 "INFO: Tests passed",

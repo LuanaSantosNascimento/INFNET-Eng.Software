@@ -1,10 +1,10 @@
-package org.sammancoaching.pipeline.service;
+package org.sammancoaching.pipeline.data;
 
-public class PipelineExecutionService {
+public class PipelineExecution {
     private final boolean testsPassed;
     private final boolean deploymentSuccessful;
 
-    public PipelineExecutionService(boolean testsPassed, boolean deploymentSuccessful) {
+    public PipelineExecution(boolean testsPassed, boolean deploymentSuccessful) {
         this.testsPassed = testsPassed;
         this.deploymentSuccessful = deploymentSuccessful;
     }

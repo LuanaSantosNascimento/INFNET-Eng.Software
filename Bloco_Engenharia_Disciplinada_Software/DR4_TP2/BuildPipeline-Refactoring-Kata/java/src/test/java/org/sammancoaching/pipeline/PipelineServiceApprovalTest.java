@@ -7,12 +7,13 @@ import org.sammancoaching.pipeline.config.CapturingLogger;
 import org.sammancoaching.pipeline.config.DefaultConfig;
 import org.sammancoaching.pipeline.data.Project;
 import org.sammancoaching.pipeline.enums.TestStatus;
+import org.sammancoaching.pipeline.service.PipelineService;
 
 /**
  * This is a different style of test, an Approval test, to illustrate another way to do this.
  * The overall coverage should be similar to PipelineTest but with less code.
  */
-public class PipelineApprovalTest {
+public class PipelineServiceApprovalTest {
 
     @Test
     void pipeline() {
@@ -33,14 +34,14 @@ public class PipelineApprovalTest {
         DefaultConfig config = new DefaultConfig(sendSummary);
         CapturingEmailer emailer = new CapturingEmailer(spy);
         CapturingLogger log = new CapturingLogger(spy);
-        Pipeline pipeline = new Pipeline(config, emailer, log);
+        PipelineService pipelineService = new PipelineService(config, emailer, log);
 
         Project project = Project.builder()
                 .setTestStatus(testStatus)
                 .setDeploysSuccessfully(buildsSuccessfully)
                 .build();
 
-        pipeline.run(project);
+        pipelineService.run(project);
         return spy.toString();
     }
 

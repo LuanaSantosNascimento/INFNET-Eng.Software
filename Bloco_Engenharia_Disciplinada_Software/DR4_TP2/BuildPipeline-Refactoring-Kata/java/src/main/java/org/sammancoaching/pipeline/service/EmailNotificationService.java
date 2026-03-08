@@ -1,8 +1,9 @@
 package org.sammancoaching.pipeline.service;
 
-import org.sammancoaching.pipeline.config.Config;
-import org.sammancoaching.pipeline.config.Emailer;
-import org.sammancoaching.pipeline.config.Logger;
+import org.sammancoaching.pipeline.util.Config;
+import org.sammancoaching.pipeline.util.Emailer;
+import org.sammancoaching.pipeline.util.Logger;
+import org.sammancoaching.pipeline.data.PipelineExecution;
 
 public class EmailNotificationService {
     private final Config config;
@@ -15,7 +16,7 @@ public class EmailNotificationService {
         this.logger = logger;
     }
 
-    public void sendSummaryNotification(PipelineExecutionService status) {
+    public void sendSummaryNotification(PipelineExecution status) {
         if (!shouldSendNotification()) {
             logger.info("Email disabled");
             return;
@@ -30,7 +31,7 @@ public class EmailNotificationService {
         return config.sendEmailSummary();
     }
 
-    private String buildNotificationMessage(PipelineExecutionService status) {
+    private String buildNotificationMessage(PipelineExecution status) {
         if (status.failedAtTestStage()) {
             return "Tests failed";
         }

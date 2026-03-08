@@ -1,19 +1,18 @@
-package org.sammancoaching.pipeline;
+package org.sammancoaching.pipeline.service;
 
-import org.sammancoaching.pipeline.config.Config;
-import org.sammancoaching.pipeline.config.Emailer;
-import org.sammancoaching.pipeline.config.Logger;
+import org.sammancoaching.pipeline.util.Config;
+import org.sammancoaching.pipeline.util.Emailer;
+import org.sammancoaching.pipeline.util.Logger;
+import org.sammancoaching.pipeline.data.PipelineExecution;
 import org.sammancoaching.pipeline.data.Project;
 import org.sammancoaching.pipeline.enums.DeploymentEnvironment;
 import org.sammancoaching.pipeline.enums.ExecutionStatus;
-import org.sammancoaching.pipeline.service.EmailNotificationService;
-import org.sammancoaching.pipeline.service.PipelineExecutionService;
 
-public class Pipeline {
+public class PipelineService {
     private final Logger logger;
     private final EmailNotificationService notificationService;
 
-    public Pipeline(Config config, Emailer emailer, Logger logger) {
+    public PipelineService(Config config, Emailer emailer, Logger logger) {
         this.logger = logger;
         this.notificationService = new EmailNotificationService(config, emailer, logger);
     }
@@ -26,7 +25,7 @@ public class Pipeline {
         boolean testsPassed = executeTestPhase(project);
         boolean deploymentSuccessful = executeDeploymentPhase(testsPassed, project, environment);
 
-        PipelineExecutionService status = new PipelineExecutionService(testsPassed, deploymentSuccessful);
+        PipelineExecution status = new PipelineExecution(testsPassed, deploymentSuccessful);
         notifyPipelineStatus(status);
     }
 
@@ -67,7 +66,7 @@ public class Pipeline {
         }
     }
 
-    private void notifyPipelineStatus(PipelineExecutionService status) {
+    private void notifyPipelineStatus(PipelineExecution status) {
         notificationService.sendSummaryNotification(status);
     }
 }

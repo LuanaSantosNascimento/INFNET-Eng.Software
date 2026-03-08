@@ -1,5 +1,7 @@
 package org.sammancoaching.pipeline.config;
 
+import org.sammancoaching.pipeline.util.Config;
+
 public class DefaultConfig implements Config {
 
     private final boolean shouldSendSummary;
