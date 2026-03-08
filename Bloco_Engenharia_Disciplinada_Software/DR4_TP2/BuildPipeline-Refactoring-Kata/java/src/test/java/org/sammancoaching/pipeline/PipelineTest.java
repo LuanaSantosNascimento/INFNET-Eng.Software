@@ -7,6 +7,7 @@ import org.sammancoaching.pipeline.config.CapturingLogger;
 import org.sammancoaching.pipeline.config.Config;
 import org.sammancoaching.pipeline.config.Emailer;
 import org.sammancoaching.pipeline.data.Project;
+import org.sammancoaching.pipeline.enums.DeploymentEnvironment;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -224,5 +225,65 @@ class PipelineTest {
         ), log.getLoggedLines());
 
         verify(emailer, never()).send(any());
+    }
+// New tests
+    @Test
+    void project_without_tests_deploys_successfully_to_staging_with_email_notification() {
+        when(config.sendEmailSummary()).thenReturn(true);
+
+        Project project = Project.builder()
+                .setTestStatus(NO_TESTS)
+                .setDeploysSuccessfullyToStaging(true)
+                .build();
+
+        pipeline.run(project, DeploymentEnvironment.STAGING);
+
+        assertEquals(Arrays.asList(
+                "INFO: No tests",
+                "INFO: Deployment successful",
+                "INFO: Sending email"
+        ), log.getLoggedLines());
+
+        verify(emailer).send("Deployment completed successfully");
+    }
+
+    @Test
+    void project_with_passing_tests_deploys_successfully_to_staging_with_email_notification() {
+        when(config.sendEmailSummary()).thenReturn(true);
+
+        Project project = Project.builder()
+                .setTestStatus(PASSING_TESTS)
+                .setDeploysSuccessfullyToStaging(true)
+                .build();
+
+        pipeline.run(project, DeploymentEnvironment.STAGING);
+
+        assertEquals(Arrays.asList(
+                "INFO: Tests passed",
+                "INFO: Deployment successful",
+                "INFO: Sending email"
+        ), log.getLoggedLines());
+
+        verify(emailer).send("Deployment completed successfully");
+    }
+
+    @Test
+    void project_with_passing_tests_fails_to_deploy_to_staging_with_email_notification() {
+        when(config.sendEmailSummary()).thenReturn(true);
+
+        Project project = Project.builder()
+                .setTestStatus(PASSING_TESTS)
+                .setDeploysSuccessfullyToStaging(false)
+                .build();
+
+        pipeline.run(project, DeploymentEnvironment.STAGING);
+
+        assertEquals(Arrays.asList(
+                "INFO: Tests passed",
+                "ERROR: Deployment failed",
+                "INFO: Sending email"
+        ), log.getLoggedLines());
+
+        verify(emailer).send("Deployment failed");
     }
 }

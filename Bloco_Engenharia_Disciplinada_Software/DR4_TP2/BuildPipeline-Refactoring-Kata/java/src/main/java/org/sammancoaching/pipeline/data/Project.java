@@ -35,10 +35,6 @@ public class Project {
         return resultFor(testStatus == PASSING_TESTS);
     }
 
-    public ExecutionStatus deploy() {
-        return deploy(DeploymentEnvironment.PRODUCTION);
-    }
-
     public ExecutionStatus deploy(DeploymentEnvironment environment) {
         switch (environment) {
             case STAGING:

@@ -4,6 +4,7 @@ import org.sammancoaching.pipeline.config.Config;
 import org.sammancoaching.pipeline.config.Emailer;
 import org.sammancoaching.pipeline.config.Logger;
 import org.sammancoaching.pipeline.data.Project;
+import org.sammancoaching.pipeline.enums.DeploymentEnvironment;
 import org.sammancoaching.pipeline.enums.ExecutionStatus;
 import org.sammancoaching.pipeline.service.EmailNotificationService;
 import org.sammancoaching.pipeline.service.PipelineExecutionService;
@@ -18,9 +19,12 @@ public class Pipeline {
     }
 
     public void run(Project project) {
+        run(project, DeploymentEnvironment.PRODUCTION);
+    }
 
+    public void run(Project project, DeploymentEnvironment environment) {
         boolean testsPassed = executeTestPhase(project);
-        boolean deploymentSuccessful = executeDeploymentPhase(testsPassed, project);
+        boolean deploymentSuccessful = executeDeploymentPhase(testsPassed, project, environment);
 
         PipelineExecutionService status = new PipelineExecutionService(testsPassed, deploymentSuccessful);
         notifyPipelineStatus(status);
@@ -47,12 +51,12 @@ public class Pipeline {
         }
     }
 
-    private boolean executeDeploymentPhase(boolean testsPassed, Project project) {
+    private boolean executeDeploymentPhase(boolean testsPassed, Project project, DeploymentEnvironment environment) {
         if (!testsPassed) {
             return false;
         }
 
-        ExecutionStatus deploymentResult = project.deploy();
+        ExecutionStatus deploymentResult = project.deploy(environment);
 
         if (deploymentResult.isSuccessful()) {
             logger.info("Deployment successful");
