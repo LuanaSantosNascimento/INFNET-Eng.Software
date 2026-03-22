@@ -1,8 +1,6 @@
 package org.example.banco.selenium.core;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
-import java.util.concurrent.TimeUnit;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.openqa.selenium.WebDriver;
